@@ -1,0 +1,22 @@
+.env
+storage/logs/*
+storage/uploads/*
+storage/mail.log
+storage/cache/
+!storage/logs/.gitkeep
+!storage/uploads/.gitkeep
+!storage/.htaccess
+public/uploads/covers/
+
+# Dependensi pengembangan (Composer). Hanya untuk tes; aplikasi tidak memakainya.
+vendor/
+composer.phar
+.phpunit.cache/
+
+# Bahan pendukung, tidak ikut repo
+prototype/
+gambar/
+docs/
+
+# Status eksekusi tugas Kiro. Milik tiap mesin, supaya tidak bentrok antar anggota tim.
+.kiro/specs/*/tasks.meta.json

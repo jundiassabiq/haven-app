@@ -1,0 +1,8 @@
+# Article covers uploaded by admins. Never execute anything here; only images are served.
+Options -Indexes
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<FilesMatch "\.(?i:php\d*|phtml|phar|html?|svg|js)$">
+  Require all denied
+</FilesMatch>

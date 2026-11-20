@@ -1,0 +1,97 @@
+/*
+  Licensed fonts. Place your font files in /fonts with these exact names.
+  If a file is missing, the browser tries a locally installed copy, then the fallback stack in styles.css.
+  Anonymous Pro is loaded from Google Fonts in index.html.
+*/
+
+/* ---------- Kazimir Text (headings) ---------- */
+@font-face {
+  font-family: "Kazimir Text";
+  src: local("Kazimir Text Regular"), local("KazimirText-Regular"),
+       url("../fonts/KazimirText-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Kazimir Text";
+  src: local("Kazimir Text Italic"), local("KazimirText-Italic"),
+       url("../fonts/KazimirText-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Kazimir Text";
+  src: local("Kazimir Text Medium"), local("KazimirText-Medium"),
+       url("../fonts/KazimirText-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Proxima Nova (body, buttons, labels, UI) ---------- */
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Light"), local("ProximaNova-Light"),
+       url("../fonts/ProximaNova-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Light Italic"), local("ProximaNova-LightIt"),
+       url("../fonts/ProximaNova-LightItalic.woff2") format("woff2");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Regular"), local("ProximaNova-Regular"),
+       url("../fonts/ProximaNova-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Regular Italic"), local("ProximaNova-RegularIt"),
+       url("../fonts/ProximaNova-RegularItalic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Semibold"), local("ProximaNova-Semibold"),
+       url("../fonts/ProximaNova-Semibold.woff2") format("woff2");
+  font-weight: 500 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Semibold Italic"), local("ProximaNova-SemiboldIt"),
+       url("../fonts/ProximaNova-SemiboldItalic.woff2") format("woff2");
+  font-weight: 500 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Bold"), local("ProximaNova-Bold"),
+       url("../fonts/ProximaNova-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Proxima Nova";
+  src: local("Proxima Nova Bold Italic"), local("ProximaNova-BoldIt"),
+       url("../fonts/ProximaNova-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}

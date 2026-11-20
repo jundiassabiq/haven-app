@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Kerangka tes Haven (feature: sdg5-improvements).
+  Cara menjalankan ada di README, bagian "Tes".
+
+  Dua test suite: "unit" (tanpa MySQL) dan "db" (butuh database haven_test).
+  Hanya berkas *Test.php di tests/ yang diambil, jadi skrip lain di dalam
+  tests/ (mis. runner lama tests/run.php) tidak terpengaruh dan tetap bisa
+  dijalankan langsung dengan `php tests/run.php`.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         cacheDirectory="storage/cache/phpunit"
+         colors="true"
+         beStrictAboutOutputDuringTests="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         failOnNotice="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnSkippedTests="true">
+
+    <testsuites>
+        <!-- Tes murni: aturan di app/core/rules, Crypto, properti Eris. Tidak butuh MySQL. -->
+        <testsuite name="unit">
+            <directory suffix="Test.php">tests</directory>
+            <exclude>tests/Database</exclude>
+        </testsuite>
+
+        <!-- Tes yang butuh database uji haven_test (dibuat lewat bin/db-reset.php). -->
+        <testsuite name="db">
+            <directory suffix="Test.php">tests/Database</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">app/core</directory>
+            <directory suffix=".php">app/models</directory>
+        </include>
+        <exclude>
+            <directory suffix=".php">app/views</directory>
+        </exclude>
+    </source>
+
+    <php>
+        <!-- Tes tidak boleh menyentuh database pengembangan. Lihat tests/Support/TestDatabase.php. -->
+        <env name="HAVEN_TEST_DB" value="haven_test" force="false"/>
+        <ini name="error_reporting" value="E_ALL"/>
+        <ini name="display_errors" value="1"/>
+    </php>
+</phpunit>
