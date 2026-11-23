@@ -86,7 +86,6 @@ Edukasi (7) ditautkan dari beranda dan laporan. Statistik (10) dihitung dari sem
 | Backend | PHP 8.2 vanilla, pola MVC ringan dengan front controller (tanpa framework, tanpa dependensi runtime) |
 | Database | MySQL / MariaDB 10.4 (XAMPP) lewat PDO |
 | Keamanan | OpenSSL (AES-256-GCM), `password_hash`, `finfo` |
-| Pengujian | Test runner PHP buatan sendiri, skrip end-to-end `curl`, uji browser lewat Edge DevTools Protocol, serta PHPUnit + Eris (property-based) sebagai dependensi pengembangan |
 | Huruf | Kazimir Text (judul), Proxima Nova (teks), Anonymous Pro (angka dan kode) |
 
 ---
@@ -97,8 +96,8 @@ Kebutuhan: **XAMPP dengan PHP 8.0+** (diuji dengan PHP 8.2.12 dan MariaDB 10.4) 
 
 ```powershell
 # 1. Ambil kode
-git clone <url-repo> haven-v2
-cd haven-v2
+git clone <url-repo> haven-app
+cd haven-app
 
 # 2. Buat .env dan kunci enkripsi
 C:\xampp\php\php.exe bin\keygen.php
@@ -133,14 +132,14 @@ Buka **http://127.0.0.1:8000**
 ### Pilihan B: Apache XAMPP
 Tambahkan ke `C:\xampp\apache\conf\extra\httpd-xampp.conf` (ganti path sesuai lokasi proyek), lalu restart Apache:
 ```apache
-Alias /haven-v2 "C:/path/ke/haven-v2/public"
-<Directory "C:/path/ke/haven-v2/public">
+Alias /haven-app "C:/path/ke/haven-app/public"
+<Directory "C:/path/ke/haven-app/public">
     Options -Indexes +FollowSymLinks
     AllowOverride All
     Require all granted
 </Directory>
 ```
-Buka **http://localhost/haven-v2/**. Hanya folder `public/` yang terbuka ke web. Folder lain ditolak lewat `.htaccess`.
+Buka **http://localhost/haven-app/**. Hanya folder `public/` yang terbuka ke web. Folder lain ditolak lewat `.htaccess`.
 
 ### Akun demo
 Semua akun memakai kata sandi `haven123`.
@@ -157,17 +156,7 @@ Setelah `bin/seed-demo.php`:
 
 Email (reset kata sandi, undangan) tidak benar-benar dikirim selama `MAIL_HOST` atau `MAIL_PORT` di `.env` kosong: isinya ditulis ke `storage/mail.log`. Dengan kedua nilai itu terisi, email dikirim lewat SMTP; yang gagal masuk tabel `mail_queue` dan dicoba ulang oleh `bin/mail-queue.php` (5 kali, jeda 10 menit), jadi jadwalkan skrip itu tiap 5 sampai 10 menit bersama `bin/reminders.php`.
 
-### Pengujian
-
-#### Runner lama (tanpa Composer)
-```powershell
-C:\xampp\php\php.exe tests\run.php                                                   # 105 unit test
-C:\xampp\php\php.exe bin\db-reset.php; powershell -ExecutionPolicy Bypass -File tests\smoke.ps1          # akun
-C:\xampp\php\php.exe bin\db-reset.php; powershell -ExecutionPolicy Bypass -File tests\smoke-cases.ps1    # modul 2 sampai 6, 9, 11
-C:\xampp\php\php.exe bin\db-reset.php; powershell -ExecutionPolicy Bypass -File tests\smoke-content.ps1  # modul 7, 10
-C:\xampp\php\php.exe bin\db-reset.php; node tests\browser.mjs                        # JavaScript di Edge headless
-```
-Skrip end-to-end butuh server berjalan di `127.0.0.1:8000` dan database yang baru di-reset.
+### Pemeriksaan ukuran mode ringan
 
 #### Anggaran 100 KB mode ringan
 ```powershell
@@ -178,30 +167,6 @@ C:\xampp\php\php.exe bin\check-lite-size.php --rinci                            
 Butuh aplikasi yang berjalan. Skrip meminta setiap halaman publik, form lapor, dan halaman lacak dengan header `Save-Data: on` supaya dilayani dalam mode ringan, lalu menjumlahkan HTML ditambah seluruh CSS dan JS yang dirujuk halaman itu. Gambar, font, dan berkas unggahan pengguna tidak dihitung. Keluar bukan nol bila ada halaman di atas 100 KB, dengan nama halaman dan ukurannya.
 
 Yang dihitung adalah byte yang dikirim server, jadi ukurannya ikut kompresi. Pada Apache XAMPP bawaan `mod_deflate` mati (`deflate_module` dan `filter_module` masih dikomentari di `httpd.conf`), dan tanpa kompresi semua halaman lewat anggaran karena `app.css` + `styles.css` + `app.js` saja sudah 115 KB. Skrip menyebutkan hal ini dan mencantumkan perkiraan ukuran bila gzip aktif.
-
-#### PHPUnit dan tes properti (fitur sdg5-improvements)
-Composer dipakai **hanya untuk dependensi pengembangan**. Kode aplikasi tetap tanpa dependensi runtime, jadi `vendor/` tidak perlu ada di server demo. Runner lama di atas tidak terpengaruh: PHPUnit hanya mengambil berkas `*Test.php`.
-
-Sekali saja, pasang dependensi tes:
-```powershell
-C:\xampp\php\php.exe -r "copy('https://getcomposer.org/composer.phar', 'composer.phar');"
-C:\xampp\php\php.exe composer.phar install
-Set-Content vendor\.htaccess "# Not web-accessible. Only public/ is served.`nRequire all denied"
-```
-Butuh ekstensi `zip` aktif di `C:\xampp\php\php.ini` (hapus titik koma pada baris `;extension=zip`), kalau tidak Composer gagal membuka paket. Baris terakhir menutup `vendor/` dari Apache; `vendor/` tidak ikut repo sehingga berkas itu perlu dibuat ulang di tiap mesin.
-
-Menjalankan tes:
-```powershell
-C:\xampp\php\php.exe vendor\phpunit\phpunit\phpunit                      # semua
-C:\xampp\php\php.exe vendor\phpunit\phpunit\phpunit --testsuite unit     # tanpa MySQL
-C:\xampp\php\php.exe vendor\phpunit\phpunit\phpunit --testsuite db       # butuh MySQL
-```
-Suite `db` memakai database terpisah `haven_test` yang dibuat ulang lewat `bin/db-reset.php`; database pengembangan (`DB_NAME` di `.env`) tidak pernah disentuh. Tes suite `db` dilewati (skipped) bila MySQL belum berjalan.
-
-Tes properti memakai [Eris](https://github.com/giorgiosironi/eris) dengan minimal 100 iterasi per properti dan diturunkan dari `Haven\Tests\Support\PropertyTestCase`. Ulangi satu kegagalan dengan seed yang sama:
-```powershell
-$env:ERIS_SEED="1234"; C:\xampp\php\php.exe vendor\phpunit\phpunit\phpunit --filter NamaTes
-```
 
 ---
 
@@ -219,7 +184,7 @@ app/
   config/       team.php (data tim untuk tabel di README)
   core/         Router, App, View, Database, Session, Csrf, Crypto, Validator, RateLimiter,
                 Auth, Audit, Notifier, CaseWorkflow, CaseAccess, Upload, Markup, …
-  core/rules/   logika murni tanpa DB (SLA, intake, agregasi) — bahan tes properti
+  core/rules/   logika murni tanpa DB (SLA, intake, agregasi)
   controllers/  satu controller per modul
   models/       Report, Message, Slot, Booking, Service, Article, Stats, …
   views/        layouts/, partials/, pages/
@@ -228,10 +193,6 @@ database/       schema.sql, seed.sql, seed-content.sql
 bin/            keygen.php, db-reset.php, seed-demo.php, purge-accounts.php, sync-team.php,
                 reminders.php, mail-queue.php, check-lite-size.php
 storage/        uploads/ (bukti), logs/, mail.log (tidak bisa dibuka dari web)
-tests/          unit test, smoke test, uji browser, PHPUnit (bootstrap.php, Support/, Harness/, Database/)
-vendor/         dependensi pengembangan Composer, tidak dipakai aplikasi (tidak ikut repo)
-prototype/      prototipe HTML statis (Task 0) sebagai referensi desain
-docs/           demo-script.md
 ```
 
 ## Tim
@@ -251,7 +212,7 @@ Jangan menyunting tabel ini dengan tangan. Nama dan NIM sengaja tidak ditampilka
 |---|---|---|
 | Muhammad Jundi Assabiq | H1D025022 | Autentikasi & Akun, Pelaporan, Lacak Laporan, Keamanan inti |
 | Muhammad Raffi Alfarizi | H1D025032 | Manajemen Kasus, Jadwal Pendampingan, Pesan Aman, Notifikasi & Audit Log |
-| Hasliza Syakina | _(belum diisi)_ | Edukasi, Direktori Layanan, Dashboard & Statistik |
+| Hasliza Syakina | H1D025037 | Edukasi, Direktori Layanan, Dashboard & Statistik |
 
 <!-- team:end -->
 

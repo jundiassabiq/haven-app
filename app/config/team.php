@@ -11,9 +11,9 @@ declare(strict_types=1);
  *
  * Nama modul mengikuti daftar modul Haven di README bagian 2.
  *
- * Catatan: NIM Hasliza Syakina masih kosong dan diisi pemilik proyek.
- * Selama kosong, `php bin/sync-team.php --check` keluar dengan kode bukan nol
- * dan menyebut namanya (Req 9.8).
+ * Catatan: `php bin/sync-team.php --check` keluar dengan kode bukan nol bila
+ * ada NIM kosong (dan menyebut namanya) atau tabel README tidak sinkron
+ * (Req 9.8).
  *
  * @return list<array{name:string, nim:string, modules:list<string>}>
  */
@@ -41,7 +41,7 @@ return [
     ],
     [
         'name' => 'Hasliza Syakina',
-        'nim' => '',
+        'nim' => 'H1D025037',
         'modules' => [
             'Edukasi',
             'Direktori Layanan',
